@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Weather Information</title>
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+    <div id="app-container">
+        <div id="weatherContainer">
+            <button id="getLocation">Get Detailed Weather Information</button>
+        </div>
+    </div>
+    <br>
+    
+
+    <script>document.addEventListener('DOMContentLoaded', () => {
+  const weatherContainer = document.getElementById('weatherContainer');
+  
+  const weatherData = {
+    "dataLength": 13,
+    "data": [
+      ["coord", {
+        "lon": -89.1028,
+        "lat": 30.438
+      }],
+      ["weather", [{
+        "id": 804,
+        "main": "Clouds",
+        "description": "overcast clouds",
+        "icon": "04n"
+      }]],
+      ["base", "stations"],
+      ["main", {
+        "temp": 289.97,
+        "feels_like": 290.32,
+        "temp_min": 289.79,
+        "temp_max": 290.36,
+        "pressure": 1023,
+        "humidity": 100,
+        "sea_level": 1023,
+        "grnd_level": 1022
+      }],
+      ["visibility", 10000],
+      ["wind", {
+        "speed": 2.06,
+        "deg": 80
+      }],
+      ["clouds", {
+        "all": 100
+      }],
+      ["dt", 1734351826],
+      ["sys", {
+        "type": 2,
+        "id": 2015175,
+        "country": "US",
+        "sunrise": 1734353207,
+        "sunset": 1734389876
+      }],
+      ["timezone", -21600],
+      ["id", 4450687],
+      ["name", "West Gulfport"],
+      ["cod", 200]
+    ]
+  };
+
+
+  function kelvinToCelsius(kelvin) {
+    return (kelvin - 273.15).toFixed(1);
+  }
+
+  function unixToDateTime(timestamp) {
+    return new Date(timestamp * 1000).toLocaleString();
+  }
+
+  function findDataByKey(key) {
+    return weatherData.data.find(item => item[0] === key)[1];
+  }
+
+
+  // Function to reset the weather container
+  function resetWeatherContainer() {
+    weatherContainer.innerHTML = `<button id="getLocation">Get Detailed Weather Information</button>`;
+    const getLocationBtn = document.getElementById('getLocation');
+    getLocationBtn.addEventListener('click', showWeatherDetails);
+  }
+
+
+  // Function to show weather details
+  function showWeatherDetails() {
+    
+    const weatherIcon = `https://openweather.site/img/wn/${findDataByKey('weather')[0].icon}.png`;
+    
+    const weatherInfo = `<div class="weather-details">
+  <h1>${findDataByKey('name')}, ${findDataByKey('sys').country}</h1> <img class="weather-icon" src="${weatherIcon}" alt="Weather Icon">
+  <table class="weather-table">
+    <thead>
+      <tr>
+        <th colspan="2">Location Coordinates</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Longitude</td>
+        <td>${findDataByKey('coord').lon}</td>
+      </tr>
+      <tr>
+        <td>Latitude</td>
+        <td>${findDataByKey('coord').lat}</td>
+      </tr>
+    </tbody>
+    <thead>
+      <tr>
+        <th colspan="2">Weather Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Main</td>
+        <td>${findDataByKey('weather')[0].main}</td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td>${findDataByKey('weather')[0].description}</td>
+      </tr>
+      <tr>
+        <td>Weather ID</td>
+        <td>${findDataByKey('weather')[0].id}</td>
+      </tr>
+    </tbody>
+    <thead>
+      <tr>
+        <th colspan="2">Temperature</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Current</td>
+        <td>${kelvinToCelsius(findDataByKey('main').temp)}°C</td>
+      </tr>
+      <tr>
+        <td>Feels Like</td>
+        <td>${kelvinToCelsius(findDataByKey('main').feels_like)}°C</td>
+      </tr>
+      <tr>
+        <td>Min Temperature</td>
+        <td>${kelvinToCelsius(findDataByKey('main').temp_min)}°C</td>
+      </tr>
+      <tr>
+        <td>Max Temperature</td>
+        <td>${kelvinToCelsius(findDataByKey('main').temp_max)}°C</td>
+      </tr>
+    </tbody>
+    <thead>
+      <tr>
+        <th colspan="2">Atmospheric Conditions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Pressure</td>
+        <td>${findDataByKey('main').pressure} hPa</td>
+      </tr>
+      <tr>
+        <td>Humidity</td>
+        <td>${findDataByKey('main').humidity}%</td>
+      </tr>
+      <tr>
+        <td>Sea Level Pressure</td>
+        <td>${findDataByKey('main').sea_level} hPa</td>
+      </tr>
+      <tr>
+        <td>Ground Level Pressure</td>
+        <td>${findDataByKey('main').grnd_level} hPa</td>
+      </tr>
+    </tbody>
+    <thead>
+      <tr>
+        <th colspan="2">Wind</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Speed</td>
+        <td>${findDataByKey('wind').speed} m/s</td>
+      </tr>
+      <tr>
+        <td>Direction</td>
+        <td>${findDataByKey('wind').deg}°</td>
+      </tr>
+    </tbody>
+    <thead>
+      <tr>
+        <th colspan="2">Additional Information</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Cloudiness</td>
+        <td>${findDataByKey('clouds').all}%</td>
+      </tr>
+      <tr>
+        <td>Visibility</td>
+        <td>${findDataByKey('visibility')} meters</td>
+      </tr>
+      <tr>
+        <td>Base</td>
+        <td>${findDataByKey('base')}</td>
+      </tr>
+      <tr>
+        <td>Data Calculation Time</td>
+        <td>${unixToDateTime(findDataByKey('dt'))}</td>
+      </tr>
+    </tbody>
+    <thead>
+      <tr>
+        <th colspan="2">Sun Cycle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sunrise</td>
+        <td>${unixToDateTime(findDataByKey('sys').sunrise)}</td>
+      </tr>
+      <tr>
+        <td>Sunset</td>
+        <td>${unixToDateTime(findDataByKey('sys').sunset)}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="control-buttons"> <button class="close-btn">Close</button> </div>
+  <pre>GET - /api/v1/weather/latlon/67.438/-45.1028</pre>
+</div>`;
+    weatherContainer.innerHTML = weatherInfo;
+    // Close button functionality
+    document.querySelector('.close-btn').addEventListener('click', resetWeatherContainer);
+  }
+  // Initial event listener
+  const getLocationBtn = document.getElementById('getLocation');
+  getLocationBtn.addEventListener('click', showWeatherDetails);
+});</script>
+</body>
+</html>
